@@ -1,4 +1,4 @@
-ajimemo.saasbase.ovh {
+aji-memo.saasbase.ovh {
     reverse_proxy frontend:3000
     encode gzip
 
@@ -21,7 +21,7 @@ ajimemo.saasbase.ovh {
     }
 }
 
-api.ajimemo.saasbase.ovh {
+api.aji-memo.saasbase.ovh {
     reverse_proxy app:8000
     encode gzip
 
@@ -39,7 +39,7 @@ api.ajimemo.saasbase.ovh {
         method OPTIONS
     }
     handle @cors_preflight {
-        header Access-Control-Allow-Origin "https://ajimemo.saasbase.ovh"
+        header Access-Control-Allow-Origin "https://aji-memo.saasbase.ovh"
         header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
         header Access-Control-Allow-Headers "Authorization, Content-Type, X-Requested-With"
         header Access-Control-Max-Age "86400"
@@ -47,6 +47,6 @@ api.ajimemo.saasbase.ovh {
     }
 
     # Add CORS headers to all responses
-    header Access-Control-Allow-Origin "https://ajimemo.saasbase.ovh"
+    header Access-Control-Allow-Origin "https://aji-memo.saasbase.ovh"
     header Access-Control-Allow-Credentials "true"
 }

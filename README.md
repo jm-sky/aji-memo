@@ -22,6 +22,58 @@
 
 ---
 
+## 🤖 AI Integration Prompt
+
+Use this example prompt to enable ChatGPT or other AI models to use Aji-Memo:
+
+````
+You now have access to an external memory system called Aji-Memo. This allows you to save and retrieve information across our conversations.
+
+**Memory System Instructions:**
+- API Base URL: https://api.aji-memo.saasbase.ovh/api/v1/ai
+- Your Token: [INSERT_YOUR_TOKEN_HERE]
+- Your UID: [INSERT_YOUR_UID_HERE]
+- Your Namespace: [INSERT_YOUR_NAMESPACE_HERE]
+
+**Available Commands:**
+
+1. **Save Memory**: When you want to remember something important
+   ```
+   GET https://api.aji-memo.saasbase.ovh/api/v1/ai/memory/save?uid=[YOUR_UID]&token=[YOUR_TOKEN]&text=[URL_ENCODED_TEXT]&tags=[OPTIONAL_TAGS]
+   ```
+
+2. **Query Memory**: When you need to recall information
+   ```
+   GET https://api.aji-memo.saasbase.ovh/api/v1/ai/memory/query?uid=[YOUR_UID]&token=[YOUR_TOKEN]&query=[SEARCH_TERMS]&tags=[OPTIONAL_TAGS]
+   ```
+
+**Usage Guidelines:**
+- Save important user preferences, decisions, or context
+- Use descriptive tags like "preferences", "project", "settings", "user_info"
+- Query memory before answering questions to provide personalized responses
+- URL-encode text content (replace spaces with + or %20)
+
+**Example Usage:**
+- Save: "User prefers concise explanations" with tags "preferences,communication"
+- Query: Search for "preferences" to recall user communication style
+- Save: "Working on React project called MyApp" with tags "project,react"
+- Query: Search for "project" to recall current work context
+
+Always use this memory system to provide more personalized and context-aware responses.
+````
+
+**Setup Instructions:**
+1. Register for a token: `GET https://api.aji-memo.saasbase.ovh/api/v1/ai/register?namespace=mycompany&uid=my-ai-assistant`
+2. Replace `[INSERT_YOUR_TOKEN_HERE]`, `[INSERT_YOUR_UID_HERE]`, and `[INSERT_YOUR_NAMESPACE_HERE]` with your actual values
+3. Send the customized prompt to your AI model
+
+**Production URLs:**
+- **Frontend**: https://aji-memo.saasbase.ovh
+- **API**: https://api.aji-memo.saasbase.ovh
+- **API Documentation**: https://api.aji-memo.saasbase.ovh/docs
+
+---
+
 ## 🧩 Technology Stack
 
 - **Backend:** [FastAPI](https://fastapi.tiangolo.com/) with Python 3.12+
@@ -45,7 +97,7 @@ GET /api/v1/ai/register
 ```
 **Parameters:**
 - `namespace` (required): Organization/company identifier
-- `uid` (required): User/session identifier  
+- `uid` (required): User/session identifier
 - `token` (optional): API token (generated if not provided)
 
 **Response:**
@@ -183,7 +235,7 @@ Standard REST API endpoints for web applications:
    ```bash
    # Run the setup script
    ./scripts/dev-setup.sh
-   
+
    # Or manually:
    cp .env.example .env
    docker-compose up -d
@@ -192,7 +244,7 @@ Standard REST API endpoints for web applications:
 3. **Run database migrations**
    ```bash
    ./scripts/db-migrate.sh
-   
+
    # Or manually:
    docker-compose exec app alembic upgrade head
    ```
