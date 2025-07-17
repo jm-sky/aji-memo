@@ -1,81 +1,332 @@
-# 🧠 Aji-Memo – Zewnętrzna pamięć AI przez REST API (GET)
+# 🧠 Aji-Memo – External AI Memory via REST API (GET)
 
-System **Aji-Memo** to zewnętrzna pamięć kontekstowa, która może być wykorzystywana przez modele językowe (np. ChatGPT) za pomocą prostych zapytań HTTP typu `GET`. Dzięki temu LLM może zapisywać i odczytywać informacje w zewnętrznym systemie bez konieczności stosowania złożonych integracji (np. pluginów czy function calling). 
-
----
-
-## 🧩 Stos technologiczny
-
-- **Backend:** [FastAPI](https://fastapi.tiangolo.com/)
-- **Frontend:** [Next.js](https://nextjs.org/)
-- **Baza danych:** PostgreSQL (np. z JSONB) lub SQLite
-- **Vector DB (opcjonalnie):** FAISS / Qdrant / Chroma
+**Aji-Memo** is an external contextual memory system that can be used by language models (e.g., ChatGPT) through simple HTTP `GET` requests. This allows LLMs to save and retrieve information in an external system without needing complex integrations (e.g., plugins or function calling).
 
 ---
 
-## 🎯 Główne założenia
+## 🎯 Project Goals & Purpose
 
-- Komunikacja przez `GET` z parametrami w `query string`.
-- Token, `uid` i `namespace` w URL.
-- Obsługa tagów (`tags=ustawienia,preferencje`) do grupowania pamięci.
-- Możliwość przeszukiwania pamięci (tekstowo lub po tagach).
-- LLM może odczytywać i zapisywać dane kontekstowe bez pluginów.
+### Why Aji-Memo?
+- **Simplicity First**: AI models can access memory using simple GET requests - no complex APIs or authentication flows
+- **Persistent Context**: Store and retrieve contextual information across conversations and sessions
+- **Scalable Architecture**: Support multiple AI users, namespaces, and organizations
+- **Full-text Search**: Advanced search capabilities with PostgreSQL's powerful FTS engine
+- **Tag-based Organization**: Categorize and filter memories using flexible tagging system
 
----
-
-## 🔑 Parametry identyfikacyjne
-
-| Parametr     | Wymagany | Domyślna wartość       | Uwagi |
-|--------------|----------|-------------------------|-------|
-| `token`      | ✅ tak   | —                       | Klucz autoryzacyjny |
-| `uid`        | ✅ tak   | —                       | Użytkownik lub identyfikator sesji |
-| `namespace`  | ⛔ opcjonalny | `namespace = uid`     | Pozwala grupować pamięć per firma/zespół |
-| `tags`       | ⛔ opcjonalny | `[]`                  | Lista tagów oddzielona przecinkami |
+### Key Benefits
+- **No Plugin Dependencies**: Works with any AI model capable of making HTTP requests
+- **Instant Integration**: Start using with just a token and namespace registration
+- **Flexible Data Structure**: Store any text-based information with optional metadata
+- **Multi-tenant Support**: Isolated memory spaces per user/organization via namespaces
+- **Production Ready**: Built with FastAPI, PostgreSQL, and industry-standard security
 
 ---
 
-## 📎 Przykłady wywołań
+## 🧩 Technology Stack
 
-### Zapis pamięci z tagami
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com/) with Python 3.12+
+- **Frontend:** [Next.js](https://nextjs.org/) with TypeScript
+- **Database:** PostgreSQL with JSONB, arrays, and full-text search
+- **Cache:** Redis for session management and caching
+- **Search:** PostgreSQL TSVECTOR with GIN indexes for full-text search
+- **Authentication:** JWT tokens for web, API tokens for AI integration
+- **Containerization:** Docker with docker-compose for development
+
+---
+
+## 🚀 API Endpoints
+
+### AI Integration Endpoints (GET)
+Simple GET endpoints designed for AI/LLM integration:
+
+#### 1. Register AI User
 ```
-GET /memory/save?
-  uid=jm-sky&
-  namespace=jm-sky&
-  token=abc123z&
-  text=Uzytkownik+lubi+ciemny+motyw&
-  tags=preferencje,ui
+GET /api/v1/ai/register
+```
+**Parameters:**
+- `namespace` (required): Organization/company identifier
+- `uid` (required): User/session identifier  
+- `token` (optional): API token (generated if not provided)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "uid": "ai-assistant",
+    "namespace": "mycompany",
+    "email": "ai-assistant@mycompany.ai",
+    "token": "abc123xyz...",
+    "message": "Registration successful"
+  }
+}
 ```
 
-### Wyszukiwanie po tagu
+#### 2. Save Memory
 ```
-GET /memory/query?
-  uid=jm-sky&
-  token=abc123z&
-  tags=preferencje
+GET /api/v1/ai/memory/save
+```
+**Parameters:**
+- `uid` (required): User/session identifier
+- `token` (required): API authentication token
+- `text` (required): Memory content to save
+- `namespace` (optional): Memory namespace (defaults to uid)
+- `tags` (optional): Comma-separated tags (e.g., "preferences,ui")
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "uid": "ai-assistant",
+    "namespace": "mycompany",
+    "text": "User prefers dark mode",
+    "tags": ["preferences", "ui"],
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  }
+}
 ```
 
-### Wyszukiwanie pełnotekstowe
+#### 3. Query Memory
 ```
-GET /memory/query?
-  uid=jm-sky&
-  token=abc123z&
-  query=ciemny+motyw
+GET /api/v1/ai/memory/query
+```
+**Parameters:**
+- `uid` (required): User/session identifier
+- `token` (required): API authentication token
+- `namespace` (optional): Memory namespace filter
+- `tags` (optional): Comma-separated tags to filter by
+- `query` (optional): Full-text search query
+- `limit` (optional): Max results (1-100, default: 10)
+- `offset` (optional): Pagination offset (default: 0)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 123,
+      "uid": "ai-assistant",
+      "namespace": "mycompany",
+      "text": "User prefers dark mode",
+      "tags": ["preferences", "ui"],
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### 4. Validate Token
+```
+GET /api/v1/ai/token/validate
+```
+**Parameters:**
+- `token` (required): API token to validate
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "token_name": "AI Token for ai-assistant",
+    "user_id": 1,
+    "permissions": {"memory": ["read", "write"]},
+    "rate_limit_per_hour": 1000,
+    "expires_at": "2025-01-15T10:30:00Z",
+    "is_active": true
+  }
+}
+```
+
+### Web Interface Endpoints (POST)
+Standard REST API endpoints for web applications:
+
+- `POST /api/v1/auth/login` - User authentication
+- `POST /api/v1/auth/register` - User registration
+- `GET /api/v1/auth/me` - Get current user info
+- `POST /api/v1/memory/save` - Save memory (authenticated)
+- `POST /api/v1/memory/query` - Query memories (authenticated)
+
+### Core Parameters
+
+| Parameter    | Required | Default Value | Description |
+|-------------|----------|---------------|-------------|
+| `token`     | ✅ Yes   | —             | API authentication token |
+| `uid`       | ✅ Yes   | —             | User or session identifier |
+| `namespace` | ⛔ Optional | `uid`       | Memory namespace (for organization) |
+| `tags`      | ⛔ Optional | `[]`        | Comma-separated tags |
+| `query`     | ⛔ Optional | —           | Full-text search query |
+| `limit`     | ⛔ Optional | `10`        | Results limit (1-100) |
+| `offset`    | ⛔ Optional | `0`         | Pagination offset |
+
+---
+
+## 🛠️ Development Environment
+
+### Prerequisites
+- **Docker & Docker Compose** - For containerized development
+- **Node.js 18+** - For frontend development
+- **Python 3.12+** - For backend development (if running locally)
+
+### Quick Start
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd aji-memo
+   ```
+
+2. **Set up environment**
+   ```bash
+   # Run the setup script
+   ./scripts/dev-setup.sh
+   
+   # Or manually:
+   cp .env.example .env
+   docker-compose up -d
+   ```
+
+3. **Run database migrations**
+   ```bash
+   ./scripts/db-migrate.sh
+   
+   # Or manually:
+   docker-compose exec app alembic upgrade head
+   ```
+
+4. **Access the services**
+   - **API**: http://localhost:8000
+   - **API Documentation**: http://localhost:8000/docs
+   - **Frontend**: http://localhost:3000
+   - **Database Admin**: http://localhost:8080 (Adminer)
+   - **Redis Admin**: http://localhost:8081 (Redis Commander)
+
+### Development Commands
+
+#### Backend
+```bash
+# View API logs
+docker-compose logs -f app
+
+# Run migrations
+docker-compose exec app alembic upgrade head
+
+# Create new migration
+docker-compose exec app alembic revision --autogenerate -m "description"
+
+# Access Python shell
+docker-compose exec app python
+
+# Run database seed
+docker-compose exec app python app/db/seed.py
+```
+
+#### Frontend
+```bash
+cd frontend
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linter
+npm run lint
+```
+
+#### Database
+```bash
+# Connect to PostgreSQL
+docker-compose exec db psql -U ajimemo -d ajimemo
+
+# Backup database
+docker-compose exec db pg_dump -U ajimemo ajimemo > backup.sql
+
+# Restore database
+docker-compose exec -T db psql -U ajimemo -d ajimemo < backup.sql
+```
+
+### Environment Variables
+Create a `.env` file based on `.env.example`:
+
+```bash
+# Database
+DATABASE_URL=postgresql://ajimemo:password@localhost:5432/ajimemo
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Security
+SECRET_KEY=your-secret-key-change-this
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# Admin User
+ADMIN_EMAIL=admin@ajimemo.com
+ADMIN_PASSWORD=admin123
+
+# Ports
+APP_PORT=8000
+DB_PORT=5432
+REDIS_PORT=6379
+ADMINER_PORT=8080
+REDIS_COMMANDER_PORT=8081
+```
+
+### Testing
+```bash
+# Run backend tests
+docker-compose exec app pytest
+
+# Run frontend tests
+cd frontend && npm test
+
+# Run specific test
+docker-compose exec app pytest tests/test_memory.py::test_save_memory
 ```
 
 ---
 
-## ⚠️ Uwagi bezpieczeństwa
+## 📖 Usage Examples
 
-- Tokeny w URL mogą wyciekać do logów lub historii.
-- GET służy wyłącznie do ułatwienia dostępu z AI (dla ludzi używaj POST).
-- Zabezpiecz API: krótkoterminowe tokeny, ograniczenia IP, zakres UID/token, dedykowana domena.
+### AI Integration Flow
+1. **Register AI user and get token**
+   ```
+   GET /api/v1/ai/register?namespace=mycompany&uid=ai-assistant
+   ```
+
+2. **Save user preference**
+   ```
+   GET /api/v1/ai/memory/save?uid=ai-assistant&token=abc123&text=User+prefers+dark+mode&tags=preferences,ui
+   ```
+
+3. **Query preferences later**
+   ```
+   GET /api/v1/ai/memory/query?uid=ai-assistant&token=abc123&tags=preferences
+   ```
+
+### Search Capabilities
+- **Tag-based**: `tags=preferences,ui`
+- **Full-text**: `query=dark+mode`
+- **Combined**: `tags=preferences&query=dark+mode`
+- **Pagination**: `limit=20&offset=40`
 
 ---
 
-## ✅ Rekomendacje
+## 🔒 Security Considerations
 
-- Endpoint `/memory/save-by-get` jako uproszczony interfejs tylko dla LLM.
-- Pełne API (`POST`, `PATCH`, `DELETE`) dla użytkowników lub panelu.
-- Możliwość przeszukiwania po tagach + fuzzy search + data sort.
+- **Tokens in URLs**: May leak to logs or browser history - use dedicated domains
+- **GET vs POST**: GET endpoints are for AI convenience - use POST for human interfaces
+- **Token Security**: API tokens are hashed with bcrypt, include expiration and rate limits
+- **Rate Limiting**: Configurable per token (AI tokens get higher limits)
+- **CORS**: Configured for specific origins in production
+- **Input Validation**: All inputs are validated using Pydantic schemas
 
 ---
