@@ -7,7 +7,7 @@ export default function SparklesLogo() {
     <div className="w-full bg-black flex flex-col items-center justify-center overflow-hidden">
       <h1 className="mt-20 md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">
         <span className="bg-gradient-to-b from-white to-gray-300 bg-clip-text text-transparent">Aji</span>
-        <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-400 bg-clip-text text-transparent">Memo</span>
+        <span className="bg-gradient-to-r from-brand-400 via-violet-400 to-brand-400 bg-clip-text text-transparent">Memo</span>
       </h1>
       <div className="w-1/2 h-40 relative">
         {/* Gradients */}

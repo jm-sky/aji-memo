@@ -1,4 +1,5 @@
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
 
 export default function AuthLayout({
@@ -7,9 +8,19 @@ export default function AuthLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen bg-background bg-gradient-to-b from-brand-50/80 to-brand-200/80 dark:from-brand-800/10 dark:to-brand-950/10">
-      <div className="absolute top-0 left-0 w-1/3 aspect-square rounded-full bg-white opacity-50 blur-md pointer-events-none z-0 mix-blend-overlay" />
-      <div className="absolute bottom-0 right-0 w-1/6 aspect-square rounded-full bg-white opacity-50 blur-lg pointer-events-none z-0 mix-blend-overlay" />
+    <div className="relative min-h-screen bg-background overflow-hidden">
+      <div className={cn(
+        'absolute inset-0 bg-[conic-gradient(from_0deg,_var(--tw-conic-gradient-stops))]',
+        '[--tw-conic-gradient-stops:theme(colors.blue.300),theme(colors.violet.300),theme(colors.green.300),theme(colors.blue.300)]',
+        'dark:[--tw-conic-gradient-stops:theme(colors.blue.950),theme(colors.violet.950),theme(colors.green.950),theme(colors.blue.950)]',
+      )}></div>
+
+      <div className="absolute rounded-full bg-white opacity-30 dark:opacity-5 filter blur-xl bg-blend-overlay aspect-square top-4 left-4 w-128"></div>
+      <div className="absolute rounded-full bg-white opacity-50 dark:opacity-10 filter blur-md bg-blend-overlay aspect-square top-1/4 left-1/4 w-64"></div>
+      <div className="absolute rounded-full bg-white opacity-50 dark:opacity-10 filter blur-md bg-blend-overlay aspect-square bottom-1/4 right-1/4 w-56"></div>
+
+      <div className="absolute rounded-full bg-white opacity-40 dark:opacity-5 filter blur-sm bg-blend-overlay aspect-square top-1/8 left-1/2 w-32"></div>
+
       <div className="absolute top-1 right-1 flex gap-4 p-2">
         <ThemeToggle />
       </div>
