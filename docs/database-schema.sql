@@ -41,6 +41,3 @@ CREATE TABLE api_usage (
 -- Indexes for performance
 CREATE INDEX idx_api_usage_user_id_created_at ON api_usage(user_id, created_at);
 CREATE INDEX idx_api_usage_created_at ON api_usage(created_at);
-
--- JSONB indexes for better query performance
-CREATE INDEX idx_api_usage_jsonb ON api_usage USING GIN(data);
