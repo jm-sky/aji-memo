@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, UserPlus, AlertCircle } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Eye, EyeOff, Lock, AlertCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,81 +13,90 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
+import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/schemas/auth';
 
-export default function RegisterPage() {
+export function ResetPasswordContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
-  const { register: registerUser } = useAuth();
+  const searchParams = useSearchParams();
+  const { resetPassword } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
+  useEffect(() => {
+    const tokenParam = searchParams.get('token');
+    if (tokenParam) {
+      setToken(tokenParam);
+    }
+  }, [searchParams]);
+
+  const onSubmit = async (data: ResetPasswordFormData) => {
+    if (!token) return;
+
     try {
-      await registerUser.mutateAsync({
-        name: data.name,
-        email: data.email,
+      await resetPassword.mutateAsync({
+        token,
         password: data.password,
       });
-      router.push('/dashboard');
+      router.push('/login?message=password-reset-success');
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Reset password failed:', error);
     }
   };
 
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">Invalid reset link</CardTitle>
+            <CardDescription>
+              The password reset link is invalid or has expired.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Please request a new password reset link.
+              </p>
+              <Button asChild className="w-full">
+                <Link href="/forgot-password">
+                  Request new link
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
+          <CardTitle className="text-2xl font-bold">Set new password</CardTitle>
           <CardDescription>
-            Get started with AjiMemo and access extended memory for Ai
+            Enter your new password below
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                {...register('name')}
-                className={errors.name ? 'border-destructive' : ''}
-              />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                {...register('email')}
-                className={errors.email ? 'border-destructive' : ''}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">New Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
+                  placeholder="Enter new password"
                   {...register('password')}
                   className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -109,12 +118,12 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
+                  placeholder="Confirm new password"
                   {...register('confirmPassword')}
                   className={errors.confirmPassword ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -138,35 +147,34 @@ export default function RegisterPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={registerUser.isPending}
+              disabled={resetPassword.isPending}
             >
-              {registerUser.isPending ? (
+              {resetPassword.isPending ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Creating account...
+                  Resetting...
                 </>
               ) : (
                 <>
-                  <UserPlus className="size-4 mr-2" />
-                  Create account
+                  <Lock className="size-4 mr-2" />
+                  Reset password
                 </>
               )}
             </Button>
 
-            {registerUser.error && (
+            {resetPassword.error && (
               <Alert variant="destructive">
                 <AlertCircle className="size-4" />
                 <AlertDescription>
-                  {registerUser.error instanceof Error ? registerUser.error.message : 'Registration failed. Please try again.'}
+                  {resetPassword.error instanceof Error ? resetPassword.error.message : 'Failed to reset password. Please try again.'}
                 </AlertDescription>
               </Alert>
             )}
           </form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-              Sign in
+          <div className="mt-6 text-center">
+            <Link href="/login" className="text-sm text-blue-600 hover:text-blue-500">
+              Back to sign in
             </Link>
           </div>
         </CardContent>
