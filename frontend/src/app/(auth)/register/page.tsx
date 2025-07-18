@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LogoText } from '@/components/ui/logo-text';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
 
@@ -48,7 +49,7 @@ export default function RegisterPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
           <CardDescription>
-            Get started with AjiMemo and access extended memory for Ai
+            Get started with <LogoText size="sm" className="inline" /> and access extended memory for Ai
           </CardDescription>
         </CardHeader>
         <CardContent>

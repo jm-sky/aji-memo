@@ -1,5 +1,6 @@
 import { ButtonLink } from "../ui/button-link"
 import { ThemeToggle } from "../ui/theme-toggle"
+import { LogoText } from "../ui/logo-text"
 
 export default function LandingNav() {
   return (
@@ -7,7 +8,7 @@ export default function LandingNav() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-foreground">AjiMemo</h1>
+            <LogoText size="lg" className="text-xl" />
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />

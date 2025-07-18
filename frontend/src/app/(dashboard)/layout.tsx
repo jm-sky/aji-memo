@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { useAuth, useUser } from '@/lib/hooks/useAuth'
 import DashboardNavbar from '@/components/navbar-components/dashboard-navbar'
 import { SidebarMenuItem } from '@/components/ui/sidebar-menu-item'
+import { LogoText } from '@/components/ui/logo-text'
 import {
   Settings,
   CreditCard,
@@ -49,7 +50,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
         <div className="relative flex w-64 flex-col bg-background shadow-xl border-r">
           <div className="flex items-center justify-between px-4 py-6">
-            <h1 className="text-xl font-bold text-foreground">AjiMemo</h1>
+            <LogoText size="lg" className="text-xl" />
             <Button
               variant="ghost"
               size="sm"
@@ -98,7 +99,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex min-h-0 flex-1 flex-col bg-background border-r border-border">
           <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
             <div className="flex items-center flex-shrink-0 px-4">
-              <h1 className="text-xl font-bold text-foreground">AjiMemo</h1>
+              <LogoText size="lg" className="text-xl" />
             </div>
             <nav className="mt-5 flex-1 space-y-1 px-2">
               {navigation.map((item) => (

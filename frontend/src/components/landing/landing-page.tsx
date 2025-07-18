@@ -13,6 +13,7 @@ import {
 import { CardHoverEffect } from '../ui/pulse-card'
 import { useRef } from 'react'
 import { ButtonLink } from '../ui/button-link'
+import { LogoText } from '../ui/logo-text'
 import AddressFooter from './address-footer'
 import LandingNav from './landing-nav'
 
@@ -188,7 +189,7 @@ export default function LandingPage() {
               Ready to get started?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of developers using AjiMemo to access Polish business data
+              Join thousands of developers using <LogoText size="sm" className="inline" /> to access Polish business data
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <ButtonLink
