@@ -17,12 +17,12 @@ interface CardProps {
 
 export const VARIANTS = {
   brand: {
-    accent: 'sky-500',
-    gradient: 'from-sky-500/20 to-sky-500/0',
+    accent: 'indigo-500',
+    gradient: 'from-indigo-500/20 to-indigo-500/0',
     shine:
-      '205deg, transparent 0deg, hsl(200deg 95% 39%) 20deg, hsl(200deg 100% 85% / 0.3) 280deg',
-    border: 'sky-500/20',
-    color: 'rgb(14 165 233)',
+      '205deg, transparent 0deg, hsl(236deg 89% 67%) 20deg, hsl(236deg 100% 85% / 0.3) 280deg',
+    border: 'indigo-500/20',
+    color: 'rgb(99 102 241)',
   },
   emerald: {
     accent: 'emerald-500',

@@ -7,7 +7,8 @@ import {
   Search,
   Zap,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Shield
 } from 'lucide-react'
 import { CardHoverEffect } from '../ui/pulse-card'
 import { useRef } from 'react'
@@ -35,7 +36,12 @@ export default function LandingPage() {
       icon: Zap,
       title: 'Share memories',
       description: 'Share memories with your friends and family or team'
-    }
+    },
+    {
+      icon: Shield,
+      title: 'Secure',
+      description: 'Hierarchical access control with namespaces'
+    },
   ]
 
   const benefits = [
@@ -159,7 +165,7 @@ export default function LandingPage() {
                   title={feature.title}
                   description={feature.description}
                   glowEffect={true}
-                  variant="blue"
+                  variant="brand"
                   size="lg"
                 />
               </motion.div>
