@@ -25,29 +25,30 @@ export default function LandingPage() {
   const features = [
     {
       icon: Building2,
-      title: 'Save memories',
-      description: 'Save memories of your conversations with Ai'
+      title: 'Save Memories',
+      description: 'Store AI conversations, preferences, and context for future sessions'
     },
     {
       icon: Search,
       title: 'Smart Search',
-      description: 'Find memories instantly with our advanced search and filtering capabilities.'
+      description: 'Find past conversations and memories instantly with full-text search'
     },
     {
       icon: Zap,
-      title: 'Share memories',
-      description: 'Share memories with your friends and family or team'
+      title: 'GET API Access',
+      description: 'Simple GET requests for AI integration - no complex setup required'
     },
     {
       icon: Shield,
-      title: 'Secure',
-      description: 'Hierarchical access control with namespaces'
+      title: 'Secure & Isolated',
+      description: 'Namespace-based isolation with secure API token authentication'
     },
   ]
 
   const benefits = [
     'Universal access by GET request',
-    'REST API with comprehensive documentation',
+    'AI-first design for easy integration',
+    'Full-text search capabilities'
   ]
 
   return (
@@ -83,8 +84,8 @@ export default function LandingPage() {
                 </span>
               </h1>
               <p className="text-xl text-muted-foreground max-w-[600px]">
-                Extended memory for Ai
-                Perfect for Ai to remember your conversations and preferences.
+                Extended memory for AI assistants.
+                Perfect for AI to remember your conversations and preferences across sessions.
               </p>
             </div>
 
@@ -141,10 +142,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Everything you need for Polish business data
+              Everything you need for AI Memory
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive API platform providing access to official Polish business registries
+              Comprehensive API platform providing persistent memory storage for AI assistants
             </p>
           </motion.div>
 
@@ -189,7 +190,7 @@ export default function LandingPage() {
               Ready to get started?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of developers using <LogoText size="sm" className="inline" /> to access Polish business data
+              Join thousands of developers using <LogoText size="sm" className="inline" /> to give AI assistants persistent memory
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <ButtonLink
