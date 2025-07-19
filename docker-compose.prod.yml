@@ -42,9 +42,26 @@ services:
     networks:
       - ajimemo-network
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-jan.madeyski@gmail.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - PGADMIN_DISABLE_POSTFIX=true
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - ajimemo-network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   postgres_data:
   redis_data:
+  pgadmin_data:
 
 networks:
   ajimemo-network:
